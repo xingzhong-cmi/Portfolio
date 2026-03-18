@@ -39,7 +39,7 @@ function TemplatePreview({
   const props = { artworks: previewArtworks, portfolioTitle, bio };
 
   return (
-    <div className="pointer-events-none h-[280px] origin-top-left scale-[0.25] overflow-hidden" style={{ width: "1200px" }}>
+    <div className="pointer-events-none h-[400px] origin-top-left scale-[0.28] overflow-hidden" style={{ width: "1200px" }}>
       {name === "minimal" && <MinimalTemplate {...props} />}
       {name === "dark" && <DarkTemplate {...props} />}
       {name === "magazine" && <MagazineTemplate {...props} />}
@@ -58,7 +58,7 @@ export default function TemplateSelector({
   return (
     <section className="space-y-6">
       <h2 className="text-3xl font-semibold">Choose Template</h2>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 grid-cols-2">
         {TEMPLATES.map((tpl) => (
           <button
             key={tpl.name}
@@ -70,7 +70,7 @@ export default function TemplateSelector({
                 : "border-foreground/10 hover:border-foreground/30"
             }`}
           >
-            <div className="relative h-[70px] w-full overflow-hidden bg-neutral-50">
+            <div className="relative h-[112px] w-full overflow-hidden bg-neutral-50">
               <TemplatePreview
                 name={tpl.name}
                 artworks={artworks}

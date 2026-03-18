@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import RequireAuth from "@/components/RequireAuth";
 import ArtworkUploader from "@/components/ArtworkUploader";
@@ -58,9 +59,10 @@ export default function EditorPage() {
         setPortfolio(created);
       }
       await updatePortfolio({ template_name: templateName, title, bio });
+      toast.success("已保存");
       if (step < 3) setStep((s) => (s + 1) as Step);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "保存失败");
+      toast.error(err instanceof Error ? err.message : "保存失败");
     } finally {
       setSaving(false);
     }
@@ -80,9 +82,10 @@ export default function EditorPage() {
         bio,
         is_published: true,
       });
+      toast.success("作品集已发布！");
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "发布失败");
+      toast.error(err instanceof Error ? err.message : "发布失败");
     } finally {
       setSaving(false);
     }
@@ -94,8 +97,9 @@ export default function EditorPage() {
       await updatePortfolio({ is_published: false });
       const p = await getMyPortfolio();
       setPortfolio(p);
+      toast.success("已取消发布");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "取消发布失败");
+      toast.error(err instanceof Error ? err.message : "取消发布失败");
     } finally {
       setSaving(false);
     }

@@ -2,16 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import RequireAuth from "@/components/RequireAuth";
 import { getMyPortfolio, listMyArtworks, updatePortfolio } from "@/lib/api";
 import type { Portfolio } from "@/types";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [artworkCount, setArtworkCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [toggling, setToggling] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     try {
@@ -19,6 +23,11 @@ export default function DashboardPage() {
         getMyPortfolio(),
         listMyArtworks(),
       ]);
+      // New user with no content → go straight to editor
+      if (!portfolioData || artworks.length === 0) {
+        router.replace("/editor");
+        return;
+      }
       setPortfolio(portfolioData);
       setArtworkCount(artworks.length);
     } catch (requestError) {
@@ -27,6 +36,8 @@ export default function DashboardPage() {
           ? requestError.message
           : "加载数据失败",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,12 +51,32 @@ export default function DashboardPage() {
     try {
       await updatePortfolio({ is_published: !portfolio.is_published });
       await loadData();
+      toast.success(portfolio.is_published ? "已取消发布" : "作品集已发布！");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "操作失败");
+      toast.error(err instanceof Error ? err.message : "操作失败");
     } finally {
       setToggling(false);
     }
   };
+
+  const copyLink = () => {
+    if (!portfolio?.slug) return;
+    const url = `${window.location.origin}/${portfolio.slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success("链接已复制到剪贴板");
+    });
+  };
+
+  if (loading) {
+    return (
+      <RequireAuth>
+        <Navbar />
+        <main className="flex min-h-[40vh] items-center justify-center text-sm text-foreground/70">
+          加载中...
+        </main>
+      </RequireAuth>
+    );
+  }
 
   return (
     <RequireAuth>
@@ -73,17 +104,23 @@ export default function DashboardPage() {
           </article>
           <article className="rounded-2xl border border-foreground/10 bg-white/50 p-6">
             <p className="text-sm text-foreground/70">公开地址</p>
-            {portfolio?.slug && portfolio?.is_published ? (
-              <Link
-                href={`/${portfolio.slug}`}
-                className="mt-2 block text-sm font-medium text-accent hover:underline"
-              >
-                /{portfolio.slug} →
-              </Link>
+            {portfolio?.slug ? (
+              <div className="mt-2 flex items-center gap-2">
+                <span className={`text-sm font-medium ${portfolio.is_published ? "text-accent" : "text-foreground/40"}`}>
+                  /{portfolio.slug}
+                  {!portfolio.is_published && " (未发布)"}
+                </span>
+                <button
+                  type="button"
+                  onClick={copyLink}
+                  className="rounded-lg border border-foreground/15 px-2 py-0.5 text-xs text-foreground/60 transition-colors hover:border-accent hover:text-accent"
+                  title="复制链接"
+                >
+                  复制
+                </button>
+              </div>
             ) : (
-              <p className="mt-2 text-sm font-medium text-foreground/40">
-                {portfolio?.slug ? `/${portfolio.slug} (未发布)` : "未生成"}
-              </p>
+              <p className="mt-2 text-sm font-medium text-foreground/40">未生成</p>
             )}
           </article>
         </section>
