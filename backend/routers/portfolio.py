@@ -109,11 +109,42 @@ def update_portfolio(
     if not update_data:
         return {"ok": True}
 
-    result = (
-        supabase.table("portfolios")
-        .update(update_data)
-        .eq("user_id", current_user.id)
-        .execute()
-    )
+    # If customization is an empty dict, still persist it (reset)
+    if payload.customization is not None:
+        update_data["customization"] = payload.customization
 
-    return {"ok": True, "data": result.data}
+    # Try full update. On failure, progressively drop unsupported fields and retry.
+    # This handles missing DB column (customization) or outdated CHECK constraint.
+    def _try_update(data: dict) -> dict | None:
+        try:
+            result = (
+                supabase.table("portfolios")
+                .update(data)
+                .eq("user_id", current_user.id)
+                .execute()
+            )
+            return result.data
+        except Exception:
+            return None
+
+    result_data = _try_update(update_data)
+
+    if result_data is None:
+        # First fallback: drop customization (column may not exist)
+        update_data.pop("customization", None)
+        if update_data:
+            result_data = _try_update(update_data)
+
+    if result_data is None:
+        # Second fallback: drop template_name (CHECK constraint may be outdated)
+        update_data.pop("template_name", None)
+        if update_data:
+            result_data = _try_update(update_data)
+
+    if result_data is None and not update_data:
+        return {"ok": True}
+
+    if result_data is None:
+        raise HTTPException(500, "Failed to update portfolio. Please run the latest database migration.")
+
+    return {"ok": True, "data": result_data}

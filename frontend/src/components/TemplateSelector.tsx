@@ -1,26 +1,30 @@
 "use client";
 
-import type { Artwork } from "@/types";
+import type { Artwork, TemplateCustomization } from "@/types";
 import MinimalTemplate from "@/components/templates/MinimalTemplate";
 import DarkTemplate from "@/components/templates/DarkTemplate";
 import MagazineTemplate from "@/components/templates/MagazineTemplate";
-
 import CyberTemplate from "@/components/templates/CyberTemplate";
+import BrutalistTemplate from "@/components/templates/BrutalistTemplate";
+import EtherealTemplate from "@/components/templates/EtherealTemplate";
 
 const TEMPLATES = [
   { name: "minimal" as const, label: "Minimal", description: "简洁白底网格布局" },
   { name: "dark" as const, label: "Dark", description: "深色沉浸式大图展示" },
   { name: "magazine" as const, label: "Magazine", description: "杂志风错落排版" },
   { name: "cyber" as const, label: "Cyber", description: "赛博朋克黑底动效" },
+  { name: "brutalist" as const, label: "Brutalist", description: "粗野主义工业美学" },
+  { name: "ethereal" as const, label: "Ethereal", description: "梦幻渐变柔光风格" },
 ] as const;
 
-type TemplateName = "minimal" | "dark" | "magazine" | "cyber";
+export type TemplateName = "minimal" | "dark" | "magazine" | "cyber" | "brutalist" | "ethereal";
 
 type Props = {
   artworks: Artwork[];
   selected: TemplateName;
   portfolioTitle: string;
   bio: string;
+  customization?: TemplateCustomization;
   onSelect: (name: TemplateName) => void;
 };
 
@@ -29,14 +33,16 @@ function TemplatePreview({
   artworks,
   portfolioTitle,
   bio,
+  customization,
 }: {
   name: TemplateName;
   artworks: Artwork[];
   portfolioTitle: string;
   bio: string;
+  customization?: TemplateCustomization;
 }) {
   const previewArtworks = artworks.slice(0, 3);
-  const props = { artworks: previewArtworks, portfolioTitle, bio };
+  const props = { artworks: previewArtworks, portfolioTitle, bio, customization };
 
   return (
     <div className="pointer-events-none h-[400px] origin-top-left scale-[0.28] overflow-hidden" style={{ width: "1200px" }}>
@@ -44,6 +50,8 @@ function TemplatePreview({
       {name === "dark" && <DarkTemplate {...props} />}
       {name === "magazine" && <MagazineTemplate {...props} />}
       {name === "cyber" && <CyberTemplate {...props} />}
+      {name === "brutalist" && <BrutalistTemplate {...props} />}
+      {name === "ethereal" && <EtherealTemplate {...props} />}
     </div>
   );
 }
@@ -53,12 +61,13 @@ export default function TemplateSelector({
   selected,
   portfolioTitle,
   bio,
+  customization,
   onSelect,
 }: Props) {
   return (
     <section className="space-y-6">
       <h2 className="text-3xl font-semibold">Choose Template</h2>
-      <div className="grid gap-4 grid-cols-2">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
         {TEMPLATES.map((tpl) => (
           <button
             key={tpl.name}
@@ -76,6 +85,7 @@ export default function TemplateSelector({
                 artworks={artworks}
                 portfolioTitle={portfolioTitle}
                 bio={bio}
+                customization={customization}
               />
             </div>
             <div className="p-4">

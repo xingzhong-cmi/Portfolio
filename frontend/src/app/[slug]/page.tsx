@@ -5,6 +5,8 @@ import MinimalTemplate from "@/components/templates/MinimalTemplate";
 import DarkTemplate from "@/components/templates/DarkTemplate";
 import MagazineTemplate from "@/components/templates/MagazineTemplate";
 import CyberTemplate from "@/components/templates/CyberTemplate";
+import BrutalistTemplate from "@/components/templates/BrutalistTemplate";
+import EtherealTemplate from "@/components/templates/EtherealTemplate";
 
 async function fetchPortfolio(slug: string): Promise<PublicPortfolioResponse | null> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -61,6 +63,7 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
     artworks,
     portfolioTitle: portfolio.title ?? "My Portfolio",
     bio: portfolio.bio ?? "",
+    customization: portfolio.customization ?? undefined,
   };
 
   switch (portfolio.template_name) {
@@ -70,6 +73,10 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
       return <MagazineTemplate {...props} />;
     case "cyber":
       return <CyberTemplate {...props} />;
+    case "brutalist":
+      return <BrutalistTemplate {...props} />;
+    case "ethereal":
+      return <EtherealTemplate {...props} />;
     default:
       return <MinimalTemplate {...props} />;
   }

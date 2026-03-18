@@ -1,19 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import type { Artwork } from "@/types";
+import type { Artwork, TemplateCustomization } from "@/types";
 
 type TemplateProps = {
   artworks: Artwork[];
   portfolioTitle: string;
   bio: string;
+  customization?: TemplateCustomization;
 };
 
 export default function CyberTemplate({
   artworks,
   portfolioTitle,
   bio,
+  customization,
 }: TemplateProps) {
+  const accent = customization?.accent_color || "#21d94f";
+  const tagline = customization?.tagline || "ART — DESIGN — CREATE — INSPIRE — EXPLORE";
   return (
     <div className="cyber-template relative min-h-screen bg-black text-white overflow-hidden">
       {/* Film grain overlay */}
@@ -26,7 +30,7 @@ export default function CyberTemplate({
 
       {/* Scroll progress bar */}
       <div className="fixed top-0 left-0 z-50 h-1 w-full">
-        <div className="h-full bg-[#21d94f] origin-left cyber-progress" />
+        <div className="h-full origin-left cyber-progress" style={{ backgroundColor: accent }} />
       </div>
 
       {/* ===== HERO SECTION ===== */}
@@ -79,25 +83,22 @@ export default function CyberTemplate({
       {/* ===== MARQUEE SECTION ===== */}
       <section className="relative overflow-hidden border-y border-white/10 bg-black py-8">
         <div className="cyber-marquee whitespace-nowrap text-4xl font-black tracking-tighter md:text-6xl lg:text-7xl">
-          <span className="mx-8 text-[#21d94f]">ART</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-white">DESIGN</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-[#ff2d53]">CREATE</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-white">INSPIRE</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-[#0075eb]">EXPLORE</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-[#21d94f]">ART</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-white">DESIGN</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-[#ff2d53]">CREATE</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-white">INSPIRE</span>
-          <span className="mx-8 text-white/30">—</span>
-          <span className="mx-8 text-[#0075eb]">EXPLORE</span>
+          {tagline.split(" — ").map((word, i) => (
+            <span key={i}>
+              <span className="mx-8" style={i % 2 === 0 ? { color: accent } : { color: "white" }}>
+                {word}
+              </span>
+              <span className="mx-8 text-white/30">—</span>
+            </span>
+          ))}
+          {tagline.split(" — ").map((word, i) => (
+            <span key={`dup-${i}`}>
+              <span className="mx-8" style={i % 2 === 0 ? { color: accent } : { color: "white" }}>
+                {word}
+              </span>
+              <span className="mx-8 text-white/30">—</span>
+            </span>
+          ))}
           <span className="mx-8 text-white/30">—</span>
         </div>
         {/* Gradient fades */}
@@ -112,7 +113,7 @@ export default function CyberTemplate({
           <div className="mb-16">
             <h2 className="mb-4 text-6xl font-black text-white md:text-8xl lg:text-9xl">
               <span className="cyber-stroke">WORKS</span>
-              <span className="text-[#21d94f]">.</span>
+              <span style={{ color: accent }}>.</span>
             </h2>
             <p className="font-mono text-sm uppercase tracking-widest text-white/50">
               SELECTED WORKS
@@ -204,7 +205,7 @@ export default function CyberTemplate({
 
         {/* Decorative corners */}
         <div className="absolute bottom-0 right-0 h-32 w-32 border-b border-r border-white/5" />
-        <div className="absolute bottom-8 right-8 h-16 w-16 border-b border-r border-[#21d94f]/20" />
+        <div className="absolute bottom-8 right-8 h-16 w-16 border-b border-r" style={{ borderColor: `${accent}33` }} />
       </footer>
 
       {/* ===== SCOPED STYLES ===== */}

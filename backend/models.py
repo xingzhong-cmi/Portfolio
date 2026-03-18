@@ -27,7 +27,8 @@ class PortfolioCreateRequest(BaseModel):
 
 
 class PortfolioUpdateRequest(BaseModel):
-    template_name: Literal["minimal", "dark", "magazine", "cyber"] | None = None
+    template_name: Literal["minimal", "dark", "magazine", "cyber", "brutalist", "ethereal"] | None = None
     title: str | None = None
     bio: str | None = Field(default=None, max_length=200)
     is_published: bool | None = None
+    customization: dict | None = None

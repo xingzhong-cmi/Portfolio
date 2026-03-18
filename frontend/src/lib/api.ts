@@ -69,6 +69,7 @@ export async function updatePortfolio(payload: {
   title?: string;
   bio?: string;
   is_published?: boolean;
+  customization?: Record<string, string | undefined>;
 }) {
   return apiRequest<{ ok: boolean }>("/api/portfolio", {
     method: "PATCH",

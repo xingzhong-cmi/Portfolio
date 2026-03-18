@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import type { Artwork } from "@/types";
+import type { Artwork, TemplateCustomization } from "@/types";
 
 type TemplateProps = {
   artworks: Artwork[];
   portfolioTitle: string;
   bio: string;
+  customization?: TemplateCustomization;
 };
 
 export default function MagazineTemplate({

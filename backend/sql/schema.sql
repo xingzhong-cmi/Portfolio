@@ -33,10 +33,11 @@ create table if not exists public.portfolios (
   title text,
   bio text,
   is_published boolean default false,
+  customization jsonb default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
   constraint portfolios_template_name_check
-    check (template_name in ('minimal', 'dark', 'magazine', 'cyber'))
+    check (template_name in ('minimal', 'dark', 'magazine', 'cyber', 'brutalist', 'ethereal'))
 );
 
 create index if not exists portfolios_slug_idx on public.portfolios(slug);

@@ -10,6 +10,8 @@ import MinimalTemplate from "@/components/templates/MinimalTemplate";
 import DarkTemplate from "@/components/templates/DarkTemplate";
 import MagazineTemplate from "@/components/templates/MagazineTemplate";
 import CyberTemplate from "@/components/templates/CyberTemplate";
+import BrutalistTemplate from "@/components/templates/BrutalistTemplate";
+import EtherealTemplate from "@/components/templates/EtherealTemplate";
 
 export default function PreviewPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -46,6 +48,18 @@ export default function PreviewPage() {
     artworks,
     portfolioTitle: portfolio?.title ?? "My Portfolio",
     bio: portfolio?.bio ?? "",
+    customization: portfolio?.customization ?? undefined,
+  };
+
+  const renderTemplate = () => {
+    switch (portfolio?.template_name) {
+      case "dark": return <DarkTemplate {...props} />;
+      case "magazine": return <MagazineTemplate {...props} />;
+      case "cyber": return <CyberTemplate {...props} />;
+      case "brutalist": return <BrutalistTemplate {...props} />;
+      case "ethereal": return <EtherealTemplate {...props} />;
+      default: return <MinimalTemplate {...props} />;
+    }
   };
 
   return (
@@ -73,16 +87,7 @@ export default function PreviewPage() {
         )}
       </div>
 
-      {/* Template preview */}
-      {portfolio?.template_name === "dark" ? (
-        <DarkTemplate {...props} />
-      ) : portfolio?.template_name === "magazine" ? (
-        <MagazineTemplate {...props} />
-      ) : portfolio?.template_name === "cyber" ? (
-        <CyberTemplate {...props} />
-      ) : (
-        <MinimalTemplate {...props} />
-      )}
+      {renderTemplate()}
     </RequireAuth>
   );
 }
